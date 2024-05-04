@@ -26,31 +26,51 @@ function crearDiv() {
         var nuevoDiv = document.createElement("div");
         nuevoDiv.classList.add("item");
 
-        // Párrafo con el texto introducido
         var parrafo = document.createElement("p");
         parrafo.textContent = inputText;
         nuevoDiv.appendChild(parrafo);
 
-        // Número inicializado en 0
+        // Div para contener los números
+        var divNumeros = document.createElement("div");
+        divNumeros.classList.add("numeros");
+
+        // Número inicializado en 0 (contador principal)
         var contador = document.createElement("span");
         contador.textContent = "0";
-        nuevoDiv.appendChild(contador);
+        divNumeros.appendChild(contador);
+
+        // Contador verde
+        var contadorVerde = document.createElement("span");
+        contadorVerde.textContent = "0";
+        contadorVerde.style.color = "green";
+        divNumeros.appendChild(contadorVerde);
+
+        // Contador rojo
+        var contadorRojo = document.createElement("span");
+        contadorRojo.textContent = "0";
+        contadorRojo.style.color = "red";
+        divNumeros.appendChild(contadorRojo);
+
+        // Agregar el div de números al div principal
+        nuevoDiv.appendChild(divNumeros);
 
         // Botón verde
         var btnGreen = document.createElement("button");
         btnGreen.textContent = "+";
         btnGreen.classList.add("btn", "btn-green");
         btnGreen.onclick = function () {
-            incrementar(contador);
+            incrementar(contadorVerde);
+            incrementar(contador); // Incrementa el contador principal
         };
         nuevoDiv.appendChild(btnGreen);
 
-        // Botón rojo para restar 1 al contador
+        // Botón rojo para incrementar el contador rojo
         var btnRed = document.createElement("button");
         btnRed.textContent = "-";
         btnRed.classList.add("btn", "btn-red");
         btnRed.onclick = function () {
-            decrementar(contador);
+            incrementar(contadorRojo);
+            decrementar(contador); // Decrementa el contador principal
         };
         nuevoDiv.appendChild(btnRed);
 
@@ -65,6 +85,17 @@ function crearDiv() {
 
         document.getElementById("container").appendChild(nuevoDiv);
 
+        var btnReset = document.createElement("button");
+        btnReset.innerHTML = '<i class="fas fa-redo"></i>';
+        btnReset.classList.add("btn", "btn-reset");
+        btnReset.onclick = function () {
+            if (confirm("¿Quieres reiniciar los contadores de " + inputText + "?")) {
+                divNumeros.querySelectorAll("span").forEach(span => span.textContent = "0");
+                guardarDatos();
+            }
+        };
+        nuevoDiv.appendChild(btnReset);
+
         // Guardar información en localStorage
         guardarDatos();
     }
@@ -77,12 +108,11 @@ function incrementar(contador) {
 }
 
 // Función para decrementar el contador
+// Función para decrementar el contador
 function decrementar(contador) {
     var valor = parseInt(contador.textContent);
-    if (valor > 0) {
-        contador.textContent = valor - 1;
-        guardarDatos();
-    }
+    contador.textContent = valor - 1; // Elimina la condición que impide valores negativos
+    guardarDatos();
 }
 
 // Función para eliminar el div
