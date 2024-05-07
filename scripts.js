@@ -127,15 +127,19 @@ function guardarDatos() {
     var data = [];
     items.forEach(function (item) {
         var texto = item.querySelector("p").textContent;
-        var contador = item.querySelector("span").textContent;
+        var contadores = item.querySelectorAll("span");
+        var contadorPrincipal = contadores[0].textContent;
+        var contadorVerde = contadores[1].textContent;
+        var contadorRojo = contadores[2].textContent;
         data.push({
             texto: texto,
-            contador: contador
+            contadorPrincipal: contadorPrincipal,
+            contadorVerde: contadorVerde,
+            contadorRojo: contadorRojo
         });
     });
     localStorage.setItem("datos", JSON.stringify(data));
 }
-
 // Función para cargar los datos desde localStorage
 function cargarDatos() {
     var data = JSON.parse(localStorage.getItem("datos"));
@@ -148,14 +152,30 @@ function cargarDatos() {
             parrafo.textContent = item.texto;
             nuevoDiv.appendChild(parrafo);
 
+            var divNumeros = document.createElement("div");
+            divNumeros.classList.add("numeros");
+
             var contador = document.createElement("span");
-            contador.textContent = item.contador;
-            nuevoDiv.appendChild(contador);
+            contador.textContent = item.contadorPrincipal;
+            divNumeros.appendChild(contador);
+
+            var contadorVerde = document.createElement("span");
+            contadorVerde.textContent = item.contadorVerde;
+            contadorVerde.style.color = "green";
+            divNumeros.appendChild(contadorVerde);
+
+            var contadorRojo = document.createElement("span");
+            contadorRojo.textContent = item.contadorRojo;
+            contadorRojo.style.color = "red";
+            divNumeros.appendChild(contadorRojo);
+
+            nuevoDiv.appendChild(divNumeros);
 
             var btnGreen = document.createElement("button");
             btnGreen.textContent = "+";
             btnGreen.classList.add("btn", "btn-green");
             btnGreen.onclick = function () {
+                incrementar(contadorVerde);
                 incrementar(contador);
             };
             nuevoDiv.appendChild(btnGreen);
@@ -164,6 +184,7 @@ function cargarDatos() {
             btnRed.textContent = "-";
             btnRed.classList.add("btn", "btn-red");
             btnRed.onclick = function () {
+                incrementar(contadorRojo);
                 decrementar(contador);
             };
             nuevoDiv.appendChild(btnRed);
@@ -176,17 +197,28 @@ function cargarDatos() {
             };
             nuevoDiv.appendChild(btnDelete);
 
-            document.getElementById("container").appendChild(nuevoDiv);
-    });
-}
+            var btnReset = document.createElement("button");
+            btnReset.innerHTML = '<i class="fas fa-redo"></i>';
+            btnReset.classList.add("btn", "btn-reset");
+            btnReset.onclick = function () {
+                if (confirm("¿Quieres reiniciar los contadores de " + item.texto + "?")) {
+                    divNumeros.querySelectorAll("span").forEach(span => span.textContent = "0");
+                    guardarDatos();
+                }
+            };
+            nuevoDiv.appendChild(btnReset);
 
-// Aplicar el tema guardado al cargar la página
-var theme = localStorage.getItem('theme');
-if (theme === 'dark') {
-document.body.classList.add('dark-mode');
-} else {
-document.body.classList.remove('dark-mode');
-}
+            document.getElementById("container").appendChild(nuevoDiv);
+        });
+    }
+
+    // Aplicar el tema guardado al cargar la página
+    var theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+    document.body.classList.add('dark-mode');
+    } else {
+    document.body.classList.remove('dark-mode');
+        }
 }
 
 
